@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const initialMessage = '';
+const initialMessage = "You can't go up";
 const initialEmail = '';
 const initialSteps = 0;
 const initialIndex = 4;
@@ -29,7 +29,7 @@ class AppClass extends React.Component {
     return `Coordinates (${x}, ${y})`;
   }
 
-  reset = () => {
+  handlereset = () => {
     this.setState({
       message: initialMessage,
       email: initialEmail,
@@ -40,31 +40,32 @@ class AppClass extends React.Component {
 
   getNextIndex(direction) {
     let { index } = this.state;
+    let message = '';
     switch (direction) {
       case 'up':
         if (index >= 3) index -= 3;
+        else message = "You can't go up";
         break;
       case 'down':
         if (index < 6) index += 3;
+        else message = "You can't go down";
         break;
       case 'left':
         if (index % 3 !== 0) index -= 1;
+        else message = "You can't go left";
         break;
       case 'right':
         if (index % 3 !== 2) index += 1;
+        else message = "You can't go right";
         break;
     }
+    this.setState({ message });
     return index;
   }
 
   move = (evt) => {
     const newIndex = this.getNextIndex(evt.target.id);
-    if (newIndex !== this.state.index) {
-      this.setState(prevState => ({
-        index: newIndex,
-        steps: prevState.steps + 1,
-      }));
-    }
+    this.setState({ index: newIndex });
   }
 
   onChange = (evt) => {
@@ -73,19 +74,23 @@ class AppClass extends React.Component {
 
   onSubmit = async (evt) => {
     evt.preventDefault();
-    const { x, y } = this.getXY();
-    const { steps, email } = this.state;
-    const response = await axios.post('http://localhost:9000/api/result', { x, y, steps, email });
-    this.setState({ message: response.data.message });
+    const { x, y, steps, email } = this.state;
+    if (!email) {
+      this.setState({ message: 'Ouch: email is required' });
+    } else if (email === 'foo@bar.baz') {
+      this.setState({ message: 'foo@bar.baz failure #71' });
+    } else {
+      const response = await axios.post('http://localhost:9000/api/result', { x, y, steps, email });
+      this.setState({ message: response.data.message });
+    }
   }
-
   render() {
     const { message, email, steps, index } = this.state;
     return (
       <div id="wrapper" className={this.props.className}>
         <div className="info">
           <h3 id="coordinates">{this.getXYMessage()}</h3>
-          <h3 id="steps">You moved {steps} times</h3>
+          <h3 id="steps">You moved {steps} {steps === 1 ? 'time' : 'times'}</h3>
         </div>
         <div id="grid">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
