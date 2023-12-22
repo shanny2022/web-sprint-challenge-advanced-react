@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react'
 import axios from 'axios'
 
@@ -78,19 +77,19 @@ export default class AppClass extends React.Component {
   move = (evt) => {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
-    const { index, steps } = this.state;
+    const { index } = this.state;
     this.setState({ message: '' })
     let nextValue;
     switch (evt) {
       case 'left':
         nextValue = this.getNextIndex('left');
-        if (index === nextValue) this.setState({ message: "You can't go left" });
-        else {
+        if (index === nextValue) {
+          this.setState({ message: "You can't go left" });
+        } else {
           this.setState((prevState) => ({
             index: nextValue,
-            steps: prevState.steps + 1,
+            steps: prevState.steps + 1, // increment steps
           }));
-          this.getXY(nextValue);
         }
         break;
       case 'right':
@@ -156,6 +155,7 @@ export default class AppClass extends React.Component {
         <div className="info">
           <h3 id="coordinates">Coordinates ({XY.X}, {XY.Y})</h3>
           <h3 id="steps">You moved {steps} {this.state.steps === 1 ? 'time' : 'times'}</h3>
+          <h3 id="email">Email: {email}</h3> {/* Display the email */}
         </div>
         <div id="grid">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
@@ -182,4 +182,3 @@ export default class AppClass extends React.Component {
     )
   }
 }
-

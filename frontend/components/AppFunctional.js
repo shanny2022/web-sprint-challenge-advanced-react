@@ -1,5 +1,3 @@
-/* eslint-disable no-extra-semi */
-/* eslint-disable no-unreachable */
 import React, { useState } from 'react'
 import axios from 'axios';
 
@@ -21,58 +19,55 @@ export default function AppFunctional(props) {
     const X = parseInt(value / 3) + 1;
     const Y = value % 3 + 1;
     setXY({ X, Y });
-  };
+  }
 
   function reset() {
     // Use this helper to reset all states to their initial values.
-    setXY({ X: 2, Y: 2 });
-    setIndex(4);
-    setSteps(0);
-    setMessage('');
-    setEmail('');
-  };
+    setIndex(4)
+    setSteps(0)
+    setMessage('')
+    setEmail('')
+  }
 
   function getNextIndex(direction) {
-    // This helper takes a direction ("left", "up", etc) and calculates what the next index
-    // of the "B" would be. If the move is impossible because we are at the edge of the grid,
-    // this helper should return the current index unchanged.
     switch (direction) {
       case 'left':
-        if (index % 3 === 0) return index;
-        else {
-          const nextIndex = index - 1;
-          setIndex(nextIndex)
-          return nextIndex;
+        // If we're at the left edge, return the current index
+        if (index % 3 === 0) {
+          return index;
+        } else {
+          // Otherwise, move left
+          return index - 1;
         }
-        break;
-      case 'right':
-        if (index % 3 == 2) return index;
-        else {
-          const nextIndex = index + 1;
-          setIndex(nextIndex)
-          return nextIndex;
-        }
-        break;
       case 'up':
-        if (parseInt(index / 3) == 0) return index;
-        else {
-          const nextIndex = index - 3;
-          setIndex(nextIndex)
-          return nextIndex;
+        // If we're at the top edge, return the current index
+        if (index < 3) {
+          return index;
+        } else {
+          // Otherwise, move up
+          return index - 3;
         }
-        break;
+      case 'right':
+        // If we're at the right edge, return the current index
+        if (index % 3 === 2) {
+          return index;
+        } else {
+          // Otherwise, move right
+          return index + 1;
+        }
       case 'down':
-        if (parseInt(index / 3) == 2) return index;
-        else {
-          const nextIndex = index + 3;
-          setIndex(nextIndex)
-          return nextIndex;
+        // If we're at the bottom edge, return the current index
+        if (index >= 6) {
+          return index;
+        } else {
+          // Otherwise, move down
+          return index + 3;
         }
-        break;
       default:
-        break;
+        // If the direction is not recognized, return the current index
+        return index;
     }
-  };
+  }
 
   function move(evt) {
     // This event handler can use the helper above to obtain a new index for the "B",
@@ -120,7 +115,7 @@ export default function AppFunctional(props) {
       default:
         break;
     }
-  };
+  }
 
   function onSubmit(evt) {
     // Use a POST request to send a payload to the server.
