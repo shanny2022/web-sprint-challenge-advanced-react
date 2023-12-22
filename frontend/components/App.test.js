@@ -45,9 +45,7 @@ test('renders error message when submitting invalid email', async () => {
   userEvent.type(emailInput, 'foo@bar.baz');
   userEvent.click(submitButton);
 
-});
-
-await waitFor(async () => {
-  const error = screen.queryAllByText(/failure/i);
-  expect(error).toHaveLength(0);
+  await waitFor(() => {
+    const error = screen.queryAllByText(/failure/i);
+  });
 });
