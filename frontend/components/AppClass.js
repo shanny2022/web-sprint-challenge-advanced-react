@@ -7,14 +7,10 @@ const initialSteps = 0;
 const initialIndex = 4;
 
 class AppClass extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: initialMessage,
-      email: initialEmail,
-      steps: initialSteps,
-      index: initialIndex,
-    };
+  state = {
+    gridIndex: 0,
+    email: '',
+    message: '',
   }
 
   getXY() {
@@ -87,19 +83,11 @@ class AppClass extends React.Component {
   }
   onSubmit = async (evt) => {
     evt.preventDefault();
-    const { x, y, steps, email } = this.state;
-    if (!email) {
-      this.setState({ message: 'Ouch: email is required' });
-    } else if (!email.includes('@')) {
-      this.setState({ message: 'Ouch: email must be a valid email' });
-    } else if (email === 'lady@gaga.com' && steps.length === 1 && ['up'].every((value, index) => value === steps[index])) {
-      this.setState({ message: 'lady win #31' });
-    } else if (email === 'lady@gaga.com') {
-      this.setState({ message: 'lady win #29' });
-    } else {
-      const response = await axios.post('http://localhost:9000/api/result', { x, y, steps, email });
-      this.setState({ message: response.data.message, email: '' });
-    }
+    const { gridIndex, email } = this.state;
+    const x = gridIndex % 3 + 1;
+    const y = Math.floor(gridIndex / 3) + 1;
+    const response = await axios.post('http://localhost:9000/api/result', { x, y, steps: 1, email });
+    this.setState({ message: response.data.message });
   }
   render() {
     const { message, email, steps, index } = this.state;
