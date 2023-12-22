@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
-import App from './App';
+import { render, fireEvent, act } from '@testing-library/react';
+import App from './App.jsx';
 
 test('renders the grid', () => {
   const { getByText } = render(<App />);
@@ -20,10 +20,12 @@ test('renders the steps', () => {
   expect(stepsElement).toBeInTheDocument();
 });
 
-test('updates the input value when typing', () => {
+test('updates the input value when typing', async () => {
   const { getByLabelText } = render(<App />);
   const inputElement = getByLabelText(/Email/i);
-  fireEvent.change(inputElement, { target: { value: 'test@example.com' } });
+  await act(async () => {
+    fireEvent.change(inputElement, { target: { value: 'test@example.com' } });
+  });
   expect(inputElement.value).toBe('test@example.com');
 });
 

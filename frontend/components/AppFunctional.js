@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 
 const initialMessage = '';
@@ -11,6 +11,7 @@ export default function AppFunctional(props) {
   const [email, setEmail] = useState(initialEmail);
   const [steps, setSteps] = useState(initialSteps);
   const [index, setIndex] = useState(initialIndex);
+
 
   function getXY() {
     const x = index % 3 + 1;
@@ -49,24 +50,29 @@ export default function AppFunctional(props) {
     return newIndex;
   }
 
-  function move(evt) {
+  const move = useCallback((evt) => {
     const newIndex = getNextIndex(evt.target.id);
     if (newIndex !== index) {
       setIndex(newIndex);
       setSteps(steps + 1);
     }
-  }
+  }, [index, steps]);
 
-  function onChange(evt) {
+  const onChange = useCallback((evt) => {
     setEmail(evt.target.value);
-  }
+  }, []);
 
-  async function onSubmit(evt) {
+  const onSubmit = useCallback(async (evt) => {
     evt.preventDefault();
     const { x, y } = getXY();
-    const response = await axios.post('http://localhost:9000/api/result', { x, y, steps, email });
-    setMessage(response.data.message);
-  }
+    try {
+      const response = await axios.post('http://localhost:9000/api/result', { x, y, steps, email });
+      setMessage(response.data.message);
+    } catch (error) {
+      console.error(error);
+      setMessage('An error occurred while submitting the form.');
+    }
+  }, [email, steps]);
 
   return (
     <div id="wrapper" className={props.className}>

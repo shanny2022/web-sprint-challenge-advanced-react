@@ -68,13 +68,20 @@ class AppClass extends React.Component {
           canMove = false;
         }
         break;
-      // similar changes for 'down'
+      case 'down':
+        if (index < 6) {
+          index += 3;
+        } else {
+          message = "You can't go down";
+          canMove = false;
+        }
+        break;
     }
 
     this.setState({ message });
 
     if (canMove) {
-      this.setState({ index });
+      this.setState({ index, steps: this.state.steps + 1 });
     }
   }
 
@@ -82,9 +89,12 @@ class AppClass extends React.Component {
     this.getNextIndex(evt.target.id);
   }
 
+
+
   onChange = (evt) => {
     this.setState({ email: evt.target.value });
   }
+  
   onSubmit = async (evt) => {
     evt.preventDefault();
     const { x, y, steps, email } = this.state;
@@ -92,7 +102,7 @@ class AppClass extends React.Component {
       this.setState({ message: 'Ouch: email is required' });
     } else if (!email.includes('@')) {
       this.setState({ message: 'Ouch: email must be a valid email' });
-    } else if (email === 'lady@gaga.com' && steps.length === 1 && ['up'].every((value, index) => value === steps[index])) {
+    } else if (email === 'lady@gaga.com' && steps === 1) {
       this.setState({ message: 'lady win #31' });
     } else if (email === 'lady@gaga.com') {
       this.setState({ message: 'lady win #29' });
