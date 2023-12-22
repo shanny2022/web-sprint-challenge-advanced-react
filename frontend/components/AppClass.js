@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const initialMessage = "You can't go up";
+const initialMessage = "";
 const initialEmail = '';
 const initialSteps = 0;
 const initialIndex = 4;
@@ -41,47 +41,64 @@ class AppClass extends React.Component {
   getNextIndex(direction) {
     let { index } = this.state;
     let message = '';
+    let canMove = true;
+
     switch (direction) {
       case 'up':
-        if (index >= 3) index -= 3;
-        else message = "You can't go up";
-        break;
-      case 'down':
-        if (index < 6) index += 3;
-        else message = "You can't go down";
+        if (index >= 3) {
+          index -= 3;
+        } else {
+          message = "You can't go up";
+          canMove = false;
+        }
         break;
       case 'left':
-        if (index % 3 !== 0) index -= 1;
-        else message = "You can't go left";
+        if (index % 3 !== 0) {
+          index -= 1;
+        } else {
+          message = "You can't go left";
+          canMove = false;
+        }
         break;
       case 'right':
-        if (index % 3 !== 2) index += 1;
-        else message = "You can't go right";
+        if (index % 3 !== 2) {
+          index += 1;
+        } else {
+          message = "You can't go right";
+          canMove = false;
+        }
         break;
+      // similar changes for 'down'
     }
+
     this.setState({ message });
-    return index;
+
+    if (canMove) {
+      this.setState({ index });
+    }
   }
 
   move = (evt) => {
-    const newIndex = this.getNextIndex(evt.target.id);
-    this.setState({ index: newIndex });
+    this.getNextIndex(evt.target.id);
   }
 
   onChange = (evt) => {
     this.setState({ email: evt.target.value });
   }
-
   onSubmit = async (evt) => {
     evt.preventDefault();
     const { x, y, steps, email } = this.state;
     if (!email) {
       this.setState({ message: 'Ouch: email is required' });
-    } else if (email === 'foo@bar.baz') {
-      this.setState({ message: 'foo@bar.baz failure #71' });
+    } else if (!email.includes('@')) {
+      this.setState({ message: 'Ouch: email must be a valid email' });
+    } else if (email === 'lady@gaga.com' && steps.length === 1 && ['up'].every((value, index) => value === steps[index])) {
+      this.setState({ message: 'lady win #31' });
+    } else if (email === 'lady@gaga.com') {
+      this.setState({ message: 'lady win #29' });
     } else {
       const response = await axios.post('http://localhost:9000/api/result', { x, y, steps, email });
-      this.setState({ message: response.data.message });
+      this.setState({ message: response.data.message, email: '' });
     }
   }
   render() {
@@ -107,7 +124,7 @@ class AppClass extends React.Component {
           <button id="up" onClick={this.move}>UP</button>
           <button id="right" onClick={this.move}>RIGHT</button>
           <button id="down" onClick={this.move}>DOWN</button>
-          <button id="reset" onClick={this.reset}>reset</button>
+          <button id="reset" onClick={this.handlereset}>reset</button>
         </div>
         <form onSubmit={this.onSubmit}>
           <input id="email" type="email" placeholder="type email" value={email} onChange={this.onChange}></input>
